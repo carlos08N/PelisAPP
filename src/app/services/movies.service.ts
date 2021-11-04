@@ -17,9 +17,12 @@ export class MoviesService {
     query += `&api_key=${ apiKey }&language=es`
     return this.http.get<T>( query );
   }
+  getPopular(){
+    const query = '/discover/movie?sort_by=popularity.desc';
+    return this.ejecutarQuery<respMDB>( query );
+  }
 
   getFeature(){
-    debugger;
     const hoy = new Date();
     const ULday = new Date( hoy.getFullYear(), hoy.getMonth() + 1, 0 ).getDate();
     const mes = hoy.getMonth() + 1;
