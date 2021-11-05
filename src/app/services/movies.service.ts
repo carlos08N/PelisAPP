@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { respMDB } from '../interfaces/interfaces';
+import { respMDB, PelisDetail, ActorPelis } from '../interfaces/interfaces';
 
 const URL = environment.url;
 const apiKey = environment.apiKey;
@@ -9,6 +9,8 @@ const apiKey = environment.apiKey;
   providedIn: 'root'
 })
 export class MoviesService {
+
+  private popularPage = 0;
 
   constructor( private http: HttpClient ) {}
 
@@ -18,7 +20,8 @@ export class MoviesService {
     return this.http.get<T>( query );
   }
   getPopular(){
-    const query = '/discover/movie?sort_by=popularity.desc';
+    this.popularPage++;
+    const query = `/discover/movie?sort_by=popularity.desc&page=${this.popularPage}`;
     return this.ejecutarQuery<respMDB>( query );
   }
 
@@ -38,8 +41,14 @@ export class MoviesService {
     const ini = `${ hoy.getFullYear() }-${ mesString }-01`;
     const end = `${ hoy.getFullYear() }-${ mesString }-${ ULday }`
 
-    console.log("inicio: ", ini);
-    console.log("Fin: ", end);
     return this.ejecutarQuery<respMDB>(`/discover/movie?primary_release_date.gte=${ ini }&primary_release_date.lte=${ end }`)
+  }
+
+  getPelisDetail ( id: string ){
+    return this.ejecutarQuery<PelisDetail>(`/movie/${id}?a=1`);
+  }
+
+  getActorPelis( id: string ){
+    return this.ejecutarQuery<ActorPelis>(`/movie/${id}/credits?a=1`);
   }
 }
